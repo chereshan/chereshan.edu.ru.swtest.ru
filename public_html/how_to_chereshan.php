@@ -1,0 +1,20 @@
+<!--Хедер (+скрипты)-->
+<?
+$PageTitle="template";
+function customPageHeader(){?>
+    <title>Привет, меня зовут Чернышев Егор</title>
+<?}
+include_once $_SERVER['DOCUMENT_ROOT']."/common/header.php";
+?>
+
+<!--todo: страница конфигурации этого сайта-->
+<!--todo: 1. Заведение бесплатного домена на spaceweb-->
+<!--todo: 2. Его настройка-->
+<!--todo: 3. Новый проект в phpstorm с рабочей ftp-синхронизацие-->
+<!--todo: 4. Хостинг картинок-->
+<!--todo: 5. Футер и хедер-->
+
+<!--Футер (+скрипты)-->
+<?php
+include_once $_SERVER['DOCUMENT_ROOT']."/common/footer.php";
+?>

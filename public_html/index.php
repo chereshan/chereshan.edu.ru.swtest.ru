@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="common/css/styles.css">
-    <title>Чернышев Егор. Обо мне и об это сайте</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../modules/jquery-3.7.1.min.js"><'+'/script>')</script>
-    <script src="common/js/body_scripts.js"></script>
-    <script src="common/counters/counters_head.js"></script>
-</head>
-<body>
-<script src="common/counters_body.js"></script>
-<h1>Привет, меня зовут Чернышев Егор</h1>
+<!--Хедер (+скрипты)-->
+<?
+$PageTitle="Привет, меня зовут Чернышев Егор";
+function customPageHeader(){?>
+    <title>Привет, меня зовут Чернышев Егор</title>
+<?}
+include_once $_SERVER['DOCUMENT_ROOT']."/common/header.php";
+?>
 <div id="index-hello_div">
     <img width="200" height="260" src="common/assets/my_facemug.png">
     <div id="index-hello-text">
@@ -63,6 +56,7 @@ foreach ($files as $key => $value) {
 <p></p>
 <?echo "http://" . $_SERVER['SERVER_NAME']
 ?>
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-</body>
-</html>
+<!--Футер (+скрипты)-->
+<?php
+include_once $_SERVER['DOCUMENT_ROOT']."/common/footer.php";
+?>

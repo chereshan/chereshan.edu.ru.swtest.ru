@@ -5,7 +5,8 @@ $root=(!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HO
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scal e=1.0">
+    <link rel="icon" type="image/x-icon" href="<?=$root.'common/assets/favicon-16x16.png'?>">
     <link rel="stylesheet" type="text/css" href="<?=$root.'common/css/styles.css'?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

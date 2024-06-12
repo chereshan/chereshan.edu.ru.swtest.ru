@@ -282,6 +282,9 @@ pre code.hljs:hover img.copy-button:not(#site_logo){visibility: visible;}
 .code-example-output:hover{
     background-color: #ffff84;
 }
+.code-example-output-title span {
+    font-weight: bold;
+}
 /*todo: поставить .code-example-output на все элементы выода примеров*/
 [data-tippy-content] {
     background-color: #89e0fc;
