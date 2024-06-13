@@ -1,0 +1,17 @@
+RewriteEngine On
+#RewriteCond %{REQUEST_FILENAME}.html -f
+#RewriteRule !.*\.php$ %{REQUEST_FILENAME}.php [L]
+#RewriteCond %{REQUEST_FILENAME}.php -f
+#RewriteRule^ (.*?)/?$ $1.php [L]
+##RewriteRule ^/pages/$ [L]
+RewriteCond %{REQUEST_FILENAME} !-d
+ # если запрашиваемый объект с дописанным расширением php - файл
+RewriteCond %{REQUEST_FILENAME}\.php -f
+ # делаем замену с дописыванием .php
+#RewriteRule ^(.*?)/?$ index.php
+RewriteRule ^(.*?)/?$ $1.php
+#RewriteRule ^([\w-]+)/pages/([\w-]+)$ /$1/$2 [R=302,L]
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.*)$ /index.php?/$1
+#RewriteRule ^(.*?)/?$ $1.php [L    ]

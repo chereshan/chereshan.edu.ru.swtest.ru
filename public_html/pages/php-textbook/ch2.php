@@ -10,8 +10,7 @@ include_once $_SERVER['DOCUMENT_ROOT']."/common/header.php";
 
 <h2>Переменные</h2>
 <p>Символ <span class="code">$</span> используется в разных языках программирования в различных целях. Например, в языке BASIC символ <span class="code">$</span> применялся в качестве завершения имен переменных, чтобы показать, что они относятся к строкам</p>
-
-<p>А в PHP символ <span class="code">$</span> должен ставиться перед именами всех переменных. Это нужно для того, чтобы PHP-парсер работал быстрее, сразу же понимая, что имеет дело с переменной. К какому бы типу ни относились переменные — к числам, строкам или массивам, все они должны выглядеть так, как показано</p>
+<p>В PHP же символ <span class="code">$</span> должен ставиться перед именами всех переменных. Это нужно для того, чтобы PHP-парсер работал быстрее, сразу же понимая, что он имеет дело с переменной. К какому бы типу ни относились переменные — к числам, строкам или массивам, все они должны выглядеть так, как показано ниже:</p>
 <pre><code class="language-php">&lt;?php
  $mycounter = 1;
  $mystring = "Hello";
@@ -371,6 +370,50 @@ echo $_SERVER['HTTP_USER_AGENT'];
 $currentPage = $_SERVER['REQUEST_URI'];
 echo $currentPage;
 ?>
+
+<h2>Не сортировано</h2>
+<h3>Переменные в переменных</h3>
+<p>Чтобы обратиться к значению переменной, имя которой хранится в другой переменной, поставьте перед именем переменной дополнительный знак <span class="code">$</span></p>
+<pre><code>&lt;?php
+$foo = "bar";
+$$foo = "baz";
+?></code></pre>
+<p>После выполнения второй команды переменная $bar будет содержать значение <span class="code">"baz"</span>.</p>
+<h3>Назначение переменной псевдонима</h3>
+<p>Чтобы назначить <span class="code">$black</span> псевдонимом переменной <span class="code">$white</span>, используйте следующую команду:</p>
+<pre><code>$black =& $white;</code></pre>
+<p>Старое значение <span class="code">$black</span>, если оно было, при этом теряется. Вместо этого <span class="code">$black</span> становится другим именем значения, хранящегося в <span class="code">$white</span>:</p>
+<pre><code>&lt;?php
+$bigLongVariableName = "PHP";
+$short =& $bigLongVariableName;
+$bigLongVariableName .= " rocks!";
+print "\$short is $short &lt;br/>";
+print "Long is $bigLongVariableName";
+//$short is PHP rocks!
+//Long is PHP rocks!
+$short = "Programming $short";
+print "\$short is $short &lt;br/>";
+print "Long is $bigLongVariableName";
+//$short is Programming PHP rocks!
+//Long is Programming PHP rocks!
+?></code></pre>
+<p>После присваивания две переменные получают альтернативные имена для одного значения, причем удаление одной из них не повлияет на вторую:</p>
+<pre><code>&lt;?php
+$white = "snow";
+$black =& $white;
+unset($white);
+print $black;
+//snow
+?></code></pre>
+<p>Функции могут возвращать значения по ссылке, например, чтобы избежать копирования больших строк или массивов:</p>
+<pre><code>&lt;?php
+function &retRef() // обратите внимание на &
+{
+    $var = "PHP";
+    return $var;
+}
+$v =& retRef(); // обратите внимание на &
+?></code></pre>
 
 <!--Футер (+скрипты)-->
 <?php

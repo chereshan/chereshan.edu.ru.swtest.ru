@@ -6,7 +6,15 @@ function customPageHeader(){?>
 <?}
 include_once $_SERVER['DOCUMENT_ROOT']."/common/header.php";
 ?>
-
+Подготовка к работе:
+Выбор хостинга:
+Что он должен поддерживать:
+1. PHP
+2. MySQL
+3. Доступ из терминала telnet или ssh
+4. Доступ по ftp
+5. установленный phpMyAdmin
+fsds
 <!--todo: страница конфигурации этого сайта-->
 <!--todo: 1. Заведение бесплатного домена на spaceweb-->
 <!--todo: 2. Его настройка-->
