@@ -51,6 +51,7 @@ echo 'Hello, world!'
 </div>
 </div>
 
+
 <h2>PHP и HTML</h2>
 <p>Подходя к изучению серверной части веб-приложений у вас, должно быть, уже на сетчатке глаз отпечатолось четкое разделение технологий по функциям: HTML - разметка и структура; CSS - стили страницы; JS - интерактивность элементов страницы. Однако, имея дело с PHP, придется забыть эти категории. PHP смешивает их без разбору. Можно написать PHP-скрипт, который будет выолнять запрограммированную задачу, а затем возвращать на выход HTML, CSS и JS.</p>
 
@@ -60,13 +61,57 @@ echo 'Hello, world!'
 <p>Веб-серверы имеют довольно широкий диапазон настроек, и некоторые веб-разработчики выбирают такой режим работы, при котором для разбора PHP-процессору принудительно передаются также файлы с расширениями HTM или HTML. Обычно это связано с тем, что разработчики хотят скрыть факт использования PHP.</p>
 
 <h2>Размещение PHP-кода</h2>
-<p>Существуют 2 распространенных способа размещения <span class="code">&lt;?php?> тэга:</span></p>
+<p>Существуют 2 распространенных способа размещения <span class="code">&lt;?php?></span>-тэга:</p>
 <ol>
     <li>Помещать в эти теги как можно меньшие фрагменты кода PHP и именно в тех местах, где нужно воспользоваться динамическими сценариями, а весь остальной документ составлять из стандартного кода HTML. (Такой код выполняется быстрее)</li>
     <li>Другие программисты открывают его в начале документа, а закрывают в самом конце и выводят любой код HTML путем непосредственного использования команды PHP. (увеличение скорости настолько мизерное, что оно не может оправдать дополнительные сложности многочисленных вставок PHP в отдельно взятый документ)</li>
 </ol>
 <p>Несмотря на то что при выборе <span class="code">&lt;?</span> неочевиден вызов PHP-парсера, это вполне приемлемый альтернативный синтаксис, который, как правило, также работает. Но не его использоать не рекомендуется, поскольку он несовместим c XML и в настоящее время его применение не приветствуется (это значит, что его поддержка может быть удалена в будущих версиях).</p>
 <p>Если в файле содержится только код PHP, то закрывающий тег <span class="code">?></span> можно опустить. Именно так и нужно делать, чтобы гарантировать отсутствие в файлах PHP лишнего пустого пространства (что имеет особую важность при написании объектно-ориентированного кода).</p>
+
+<!--todo: сократить раздел до минимальной информации-->
+<h2>Включение внешнего кода</h2>
+<p>PHP поддерживает две конструкции для загрузки кода и HTML из другого модуля: <span class="code">require</span> и <span class="code">include</span>. Они загружают файл в процессе выполнения скрипта PHP, работают в условных командах и циклах и сигнализируют, если файл не удается найти. Для поиска файлов используется либо путь, указанный как часть указателя, либо значение параметра <span class="code">include_path</span> в файлах <span class="code">php.ini</span>. Параметр <span class="code">include_path</span> может быть переопределен функцией <span class="code">set_include_path()</span>. Если файл не найден, PHP ищет файл в каталоге вызывающего скрипта. Попытка выполнения <span class="code">require</span> с несуществующим файлом приводит к неисправимой ошибке, тогда как <span class="code">include</span> выдает предупреждение, не останавливая выполнение скрипта.</p>
+<p>Команда <span class="code">include</span> чаще всего используется для отделения контента, специфического для страницы, от общих элементов дизайна сайта. Общие элементы (такие, как заголовки и завершители) хранятся в отдельных файлах HTML, а каждая страница выглядит примерно так:</p>
+<pre><code>&lt;?php include "header.html"; ?>
+основной контент
+&lt;?php include "footer.html"; ?></code></pre>
+<p>Мы используем <span class="code">include</span>, потому что эта команда позволяет PHP продолжить обработку страницы, даже если в файле (файлах) дизайна сайта присутствует ошибка. Конструкция <span class="code">require</span> больше подходит для работы с библиотекой, страница которой в случае неудачной загрузки просто не отображается. Пример:</p>
+<pre><code>&lt;?php
+require "codelib.php";
+mysub(); // определяется в codelib.php
+?></code></pre>
+<p>Существует другой, чуть более эффективный способ реализации заголовков
+и завершителей, в котором сначала загружаются одиночные файлы, после чего
+вызываются функции, генерирующие стандартизированные элементы сайта:</p>
+<pre><code>&lt;?php require "design.php";
+header(); ?>
+content
+&lt;?php footer();</code></pre>
+<p>Если PHP не может разобрать какую-либо часть файла, добавленного <span class="code">include</span> или <span class="code">require</span>, выводится предупреждение и выполнение продолжается. Чтобы не получать предупреждение, поставьте перед вызовом оператор <span class="code">@</span> — например,
+<span class="code">@include</span>.</p>
+<p>Если в файле конфигурации PHP <span class="code">php.ini</span> включен параметр <span class="code">allow_url_fopen</span>, вы сможете добавлять файлы с удаленного сайта, указывая URL-адрес вместо обычного локального пути:</p>
+<pre><code>&lt;?php
+include "http://www.example.com/codelib.php";
+?></code></pre>
+<p>Если программа использует <span class="code">include</span> или <span class="code">require</span> для повторного включения файла (например, ошибочно в цикле), файл будет загружен, а хранящийся в нем код выполнен или разметка HTML будет выведена дважды. Это может привести к ошибкам при переопределении функций или отправке нескольких копий заголовков или разметки HTML. Для предотвращения подобных ошибок используются конструкции <span class="code">include_once</span> и <span class="code">require_once</span>, позволяющие загружать конкретный файл только один раз. Это полезно, например, для добавления элементов страницы, хранящихся в отдельных файлах. Библиотеки элементов должны загружать пользовательские настройки командой <span class="code">require_once</span>, чтобы создатель страницы включал элементы, не проверяя, был ли код пользовательских настроек уже загружен ранее.</p>
+<p>Код включенного файла импортируется с областью видимости, действующей
+на момент обнаружения команды <span class="code">include</span>, поэтому включенный код может увидеть и изменить переменные исходного кода. Данная возможность позволяет, например, библиотеке отслеживания пользователей сохранить имя текущего пользователя в глобальной переменной <span class="code">$user</span>:
+</p>
+<pre><code>&lt;?php
+// главная страница
+include "userprefs.php";
+echo "Hello, {$user}.";
+?></code></pre>
+<p>Тот факт, что библиотеки смогут видеть и изменять ваши переменные, также
+может создать проблемы. Вы должны знать все глобальные переменные, используемые библиотекой, чтобы случайно не использовать их для собственных
+целей и не вмешаться в работу библиотеки.</p>
+<p>Если конструкция include или require находится в функции, переменные во
+включенном файле становятся переменными, обладающими областью видимости этой функции.</p>
+<p>Функция <span class="code">get_included_files()</span> возвращает массив с полными системными
+    именами всех файлов, включенных в скрипт посредством <span class="code">include</span> или <span class="code">require</span>.
+    Файлы, при разборе которых произошла ошибка, в массив не включаются.</p>
+
 
 <h2>Каталоги сайта</h2>
 <ul>
@@ -87,7 +132,17 @@ echo 'Hello, world!'
 #######################</code></pre></li>
     <li>Команды PHP завершаются <b>обязательно</b> точкой с запятой <span class="code">;</span>. После блока <span class="code">{...}</span> или перед закрывающим тегом <span class="code">?></span> точки с запятой не требуется.</li>
     <li>Перед именем всех переменных ставится <span class="code">$</span></li>
-    <li>В PHP используются стандартные литералы: <span class="code">'string'</span>, <span class="code">456</span>, <span class="code">true</span>, <span class="code">1.4234</span>, <span class="code">null</span></li>
+    <li>В PHP используются стандартные литералы: <span class="code">'string'</span>, <span class="code">456</span>, <span class="code">true</span>, <span class="code">1.4234</span>, <span class="code">null</span>
+        <pre><code class="language-php">&lt;?php
+$myname = "Brian";
+$myage = 37;
+echo "a: " . 73 . "&lt;br>"; // Числовой литерал
+echo "b: " . "Hello" . "&lt;br>"; // Строковый литерал
+echo "c: " . FALSE . "&lt;br>"; // Литерал константы
+echo "d: " . $myname . "&lt;br>"; // Строковая переменная
+echo "e: " . $myage . "&lt;br>"; // Числовая переменная
+?></code></pre>
+    </li>
     <li>Отсчет индексов начинается с <span class="code">0</span></li>
     <li>PHP чувствителен к регистру переменных, но не чувствителен к регистру встроенных конструкций и ключевых слов
 <!--        todo: переписать пример ниже в tip-->
@@ -140,19 +195,52 @@ $3wa
     <li><span class="code">null</span></li>
     <li>Ресурсы</li>
 </ol>
+
 <h4>Преобразование типов</h4>
-<h5>Число и строка</h5>
-<p>PHP автоматически преобразует типы. Например, автоматическое преобразование числа в строку:</p>
-<pre><code class="language-php">&lt;?php
- $number = 12345 * 67890;
- echo substr($number, 3, 1);
-?></code></pre>
-<p>Автоматическое преобразование строки в число:</p>
-<pre><code class="language-php">&lt;?php
- $pi = "3.1415927";
- $radius = 5;
- echo $pi * ($radius * $radius);
-?></code></pre>
+<style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+        overflow:hidden;padding:10px 5px;word-break:normal;}
+    .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+        font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+    .tg .tg-6e8n{background-color:#c0c0c0;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
+    .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+    <thead>
+    <tr>
+        <th class="tg-6e8n">Тип преобразования</th>
+        <th class="tg-6e8n">Описание</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="tg-0pky"><span class="code">(int)</span> <span class="code">(integer)</span></td>
+        <td class="tg-0pky">В целое число через отбрасывание десятичной части.</td>
+    </tr>
+    <tr>
+        <td class="tg-0pky"><span class="code">(bool)</span> <span class="code">(boolean)</span></td>
+        <td class="tg-0pky">В логическое значение.</td>
+    </tr>
+    <tr>
+        <td class="tg-0pky"><span class="code">(float)</span> <span class="code">(double)</span> <span class="code">(real)</span></td>
+        <td class="tg-0pky">В число с плавающей точкой.</td>
+    </tr>
+    <tr>
+        <td class="tg-0pky"><span class="code">(string)</span></td>
+        <td class="tg-0pky">В строку.</td>
+    </tr>
+    <tr>
+        <td class="tg-0pky"><span class="code">(array)</span></td>
+        <td class="tg-0pky">В массив.</td>
+    </tr>
+    <tr>
+        <td class="tg-0pky"><span class="code">(object)</span></td>
+        <td class="tg-0pky">В объект.<br></td>
+    </tr>
+    </tbody>
+</table>
+
 <h5>Преобразование bool</h5>
 <p>Следующие значения интерпретируются как <span class="code">false</span> и <span class="code">true</span>:</p>
 <pre><code>&lt;?php
@@ -169,6 +257,19 @@ true==true;
 
 is_bool('');
 ?></code></pre>
+<h5>Число и строка</h5>
+<p>PHP автоматически преобразует типы. Например, автоматическое преобразование числа в строку:</p>
+<pre><code class="language-php">&lt;?php
+ $number = 12345 * 67890;
+ echo substr($number, 3, 1);
+?></code></pre>
+<p>Автоматическое преобразование строки в число:</p>
+<pre><code class="language-php">&lt;?php
+ $pi = "3.1415927";
+ $radius = 5;
+ echo $pi * ($radius * $radius);
+?></code></pre>
+
 
 <h3>Строки</h3>
 <p>Для строк используются типичные для других языков литералы <span class="code">'</span> и <span class="code">"</span>.</p>
@@ -228,6 +329,54 @@ foreach ($creator as $invention => $inventor) {
     echo "{$inventor} invented the {$invention}&lt;br/>";
 }
 ?></code></pre>
+
+<pre><code>&lt;?php
+$person = array("Edison", "Wankel", "Crapper");
+$creator = array('Light bulb' => "Edison",
+    'Rotary Engine' => "Wankel",
+    'Toilet' => "Crapper");
+foreach ($creator as $invention => $inventor) {
+    echo "{$inventor} invented the {$invention}&lt;br/>";
+}
+?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?php
+$person = array("Edison", "Wankel", "Crapper");
+$creator = array('Light bulb' => "Edison",
+    'Rotary Engine' => "Wankel",
+    'Toilet' => "Crapper");
+foreach ($creator as $invention => $inventor) {
+    echo "{$inventor} invented the {$invention}<br/>";
+}
+?>
+</pre>
+    </div>
+</div>
+<h4>Сортировка массива</h4>
+<pre><code>&lt;?php
+$person = array("Edison", "Wankel", "Crapper");
+$creator = array('Light bulb' => "Edison",
+    'Rotary Engine' => "Wankel",
+    'Toilet' => "Crapper");
+sort($person);
+print_r($person);
+?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?php
+$person = array("Edison", "Wankel", "Crapper");
+$creator = array('Light bulb' => "Edison",
+    'Rotary Engine' => "Wankel",
+    'Toilet' => "Crapper");
+sort($person);
+print_r($person);
+?>
+</pre>
+    </div>
+</div>
 
 
 <h3><span class="code">echo</span> и <span class="code">print</span></h3>

@@ -1,6 +1,6 @@
 <!--Хедер (+скрипты)-->
 <?
-$PageTitle="Глава -1. Строковый тип PHP";
+$PageTitle="Глава -1. Нестроковый тип PHP";
 function customPageHeader(){?>
     <title>Глава -1. Строковый тип PHP</title>
 <?}
