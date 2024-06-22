@@ -1,149 +1,384 @@
 <!--Хедер (+скрипты)-->
 <?
-$PageTitle="Глава 6. Cookies";
+$PageTitle="Глава 6. Обработка форм";
 function customPageHeader(){?>
-    <title>Глава 6. Cookies</title>
+    <title>Глава 6. Обработка форм</title>
 <?}
 include_once $_SERVER['DOCUMENT_ROOT']."/common/header.php";
 ?>
-<h2>Использование cookie в PHP</h2>
-<p>Cookie представляет собой элемент данных, который веб-сервер с помощью
-    браузера сохраняет на жестком диске вашего компьютера. Этот элемент может
-    содержать практически любую буквенно-цифровую информацию (объемом не
-    более 4 Кбайт) и может быть извлечен из вашего компьютера и возвращен на
-    сервер. Чаще всего cookie используются для отслеживания хода сессий, обобщения данных нескольких визитов, хранения содержимого корзины покупателя,
-    хранения сведений, необходимых для входа в систему, и т. д.</p>
-<p>В силу своей закрытости cookie могут быть считаны только из создавшего их
-    домена. Иными словами, если cookie, к примеру, был создан на oreilly.com, он
-    может быть извлечен лишь веб-сервером, использующим этот домен. Это не
-    позволяет другим сайтам получить доступ к сведениям, на владение которыми
-    у них нет разрешения.</p>
-<p>Из-за особенностей работы интернета многие элементы веб-страницы могут
-    быть вставлены из нескольких доменов, каждый из которых может создавать свои собственные cookie. Они называются сторонними cookie. Чаще всего они
-    создаются рекламными компаниями для отслеживания пользователей на нескольких сайтах или в аналитических целях.</p>
-<p>оэтому большинство браузеров позволяют пользователям отключать cookie
-    либо от домена текущего сервера, либо от сторонних серверов, либо и от тех и от
-    других. К счастью, большинство пользователей, отключающих cookie, делают
-    это только в отношении сторонних сайтов.</p>
-<p>Обмен cookie осуществляется во время передачи заголовков еще до того, как
-    будет отправлен код HTML веб-страницы. Отправить cookie после передачи
-    HTML-кода уже невозможно. Поэтому четкое планирование использования
-    cookie приобретает особую важность. На рис. 13.1 показан типичный диалог
-    с передачей cookie в форме «запрос — ответ» между браузером и веб-сервером.</p>
-<img src="../imgs/request-responce%20cookies.png" alt="">
-<p>В этом обмене данными показан браузер, получающий две страницы.</p>>
-<ol>
-    <li>Браузер выдает запрос на извлечение главной страницы index.html с сайта
-        http://www.webserver.com. В первом заголовке указывается файл, а во втором — сервер.</li>
-    <li>Когда веб-сервер на webserver.com получает эту пару заголовков, он возвращает несколько своих заголовков. Во втором заголовке определяется тип
-        отправляемого содержимого (text/html), а в третьем отправляется cookie
-        с именем name, имеющий значение value. И только после этого передается
-        содержимое веб-страницы.</li>
-    <li>После того как браузер получит cookie, он должен возвращать его с каждым
-        последующим запросом, сделанным в адрес сервера, создавшего cookie, пока у cookie не истечет срок действия или этот cookie не будет удален. Поэтому
-        когда браузер запрашивает новую страницу /news.html, он также возвращает
-        cookie name со значением value.
+<h2>Создание форм</h2>
+<p>Сначала создается форма, в которую пользователь может вводить необходимые данные. Затем эти данные отправляются веб-серверу, где происходит их разбор, зачастую совмещаемый с проверкой на отсутствие ошибок. Если код PHP найдет одно или несколько полей, требующих повторного ввода, форма может быть заново отображена вместе с сообщением об ошибке. Когда качество введенных данных удовлетворяет программу, она предпринимает некоторые действия, часто привлекая для этого базы данных, к примеру для ввода сведений о покупке</p>
+<p>Для создания форм понадобятся, как минимум, следующие элименты: </p>
+<ul>
+    <li>открывающий и закрывающий теги — <span class="code">&lt;form></span> и <span class="code">&lt;/form></span> соответственно;</li>
+    <li>тип передачи данных, задаваемый одним из двух методов — <span class="code">GET</span> или <span class="code">POST</span>;
     </li>
-    <li>Поскольку на момент отправки /news.html cookie уже был установлен,
-        сервер не должен заново посылать этот cookie и возвращает только запрошенную страницу</li>
-</ol>
-<p>Cookie-файлы легко редактируются непосредственно из браузера с помощью встроенного инструмента разработчика или специальных расширений. Поэтому, исходя из того, что пользователи могут изменять значения
-    cookie-файлов, в эти файлы не следует помещать такую информацию, как
-    имя пользователя, иначе можно столкнуться с манипулированием вашим
-    веб-сайтом неожиданным для вас образом. Cookie-файлы лучше использовать для сохранения данных вроде настроек на используемый язык или
-    валюту</p>
-<h2>Установка cookie в PHP</h2>
-Установка cookie в PHP осуществляется довольно просто. До передачи кода
-HTML нужно вызвать функцию setcookie, для чего используется следующий
-синтаксис
-<pre><code class="language-php">&lt;?setcookie(name, value, expire, path, domain, secure, httponly);?></code></pre>
+    <li>одно или несколько полей для ввода данных;
+    </li>
+    <li>URL-адрес назначения, по которому будут отправлены данные формы.</li>
+</ul>
 
+<pre><code>&lt;? // formtest.php
+echo &lt;&lt;&lt; _END
+ &lt;form method="post" action="../formtest.php">
+ Как вас зовут?
+ &lt;input type="text" name="name">
+ &lt;input type="submit">
+ &lt;/form>
+_END;
+?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<? // formtest.php
+echo <<< _END
+ <form method="post" action="../formtest.php">
+ Как вас зовут?
+ <input type="text" name="name">
+ <input type="submit">
+ </form>
+_END;
+?>
+</pre>
+    </div>
+</div>
 
-<style type="text/css">
-    .tg  {border-collapse:collapse;border-spacing:0;margin:0px auto;}
-    .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-        overflow:hidden;padding:10px 5px;word-break:normal;}
-    .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-        font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-    .tg .tg-trd5{background-color:#C0C0C0;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
-    .tg .tg-6e8n{background-color:#c0c0c0;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
-    .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-</style>
-<table class="tg">
-    <thead>
-    <tr>
-        <th class="tg-6e8n">Параметр</th>
-        <th class="tg-6e8n">Описание</th>
-        <th class="tg-trd5">Пример</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td class="tg-0pky">name</td>
-        <td class="tg-0pky">Имя cookie. Это имя ваш сервер будет использовать для доступа к cookie<br>при последующих запросах браузера.</td>
-        <td class="tg-0pky">username</td>
-    </tr>
-    <tr>
-        <td class="tg-0pky">value</td>
-        <td class="tg-0pky">Значение cookie или его содержимое. Объем может составлять до 4 Кбайт текста.</td>
-        <td class="tg-0pky">USA</td>
-    </tr>
-    <tr>
-        <td class="tg-0pky">expire</td>
-        <td class="tg-0pky"><span style="font-style:italic">(optional)</span><br>Время истечения срока действия в формате метки UNIX. Как правило, для установки <br>этого параметра используется функция time(), к которой будет прибавляться число<br>секунд.<br><span style="font-weight:bold">Если параметр не установлен, то срок заканчивается с с закрытием браузера</span>.</td>
-        <td class="tg-0pky">time() + 2592000</td>
-    </tr>
-    <tr>
-        <td class="tg-0pky">path</td>
-        <td class="tg-0pky"><span style="font-style:italic">(optional)</span><br><span style="font-style:normal">Путь к cookie на сервере.</span><br><span style="font-weight:bold">Если используется слэш ("/"), то cookie доступен для всего домена www.webserver.com</span>. <br><span style="font-weight:bold">Если указан подкаталог, то cookie будет доступен только в пределах этого подкаталога. </span><br>По умолчанию путь указывает текущий каталог, где был установлен cookie, и, как правило, <br>используется именно такая настройка.</td>
-        <td class="tg-0pky">/</td>
-    </tr>
-    <tr>
-        <td class="tg-0pky">domain</td>
-        <td class="tg-0pky"><span style="font-style:italic">(optional)</span><br>Интернет-домен, которому принадлежит cookie.<br><span style="font-weight:bold">Если это webserver.com, то cookie доступны для всего домена и его поддоменов.</span></td>
-        <td class="tg-0pky">webserver.com</td>
-    </tr>
-    <tr>
-        <td class="tg-0pky">secure</td>
-        <td class="tg-0pky"><span style="font-style:italic">(optional)</span><br><span style="font-style:normal">Должен ли cookie использовать безопасное подключение. </span><br><br></td>
-        <td class="tg-0pky">FALSE</td>
-    </tr>
-    <tr>
-        <td class="tg-0pky">httponly</td>
-        <td class="tg-0pky"><span style="font-style:italic">(optional)</span><br>Определяет, должен ли cookie использовать протокол HTTP. <br><span style="font-weight:bold">Если установлено TRUE, то такие языки, как JS, не смогут получить доступа к cookie.</span></td>
-        <td class="tg-0pky">FALSE</td>
-    </tr>
-    </tbody>
-</table>
-<h2>Доступ к cookie</h2>
-Для чтения значения cookie нужно просто обратиться к системному массиву
-$_COOKIE. Например, если нужно посмотреть, хранится ли на текущем браузере
-cookie по имени location, и если хранится, прочитать его значение, то используется следующая строка кода:</p>
-<pre><code class="language-php">&lt;?
-if (isset($_COOKIE['location'])) {
-    $location = $_COOKIE['location'];
-    echo $location;
+<h2>Получение данных из формы</h2>
+
+<pre><code>&lt;form action="&lt;?=$_SERVER['DOCUMENT_ROOT']."/common/scripts/sayHello.php"?>" method="POST">
+    &lt;fieldset>
+        &lt;label for="first_name">Имя:&lt;/label>
+        &lt;input type="text" name="first_name" size="20" />&lt;br />
+        &lt;label for="last_name">Фамилия:&lt;/label>
+        &lt;input type="text" name="last_name" size="20" />&lt;br />
+        &lt;label for="email">Адрес электронной почты:&lt;/label>
+        &lt;input type="text" name="email" size="50" />&lt;br />
+        &lt;label for="facebook_url">URL в Facebook:&lt;/label>
+        &lt;input type="text" name="facebook_url" size="50" />&lt;br />
+        &lt;label for="twitter_handle">Идентификатор в Twitter:&lt;/label>
+        &lt;input type="text" name="twitter_handle" size="20" />&lt;br />
+    &lt;/fieldset>
+    &lt;br />
+    &lt;fieldset class="center">
+        &lt;input type="submit" value="Вступить в клуб" />
+        &lt;input type="reset" value="Очистить и начать все сначала" />
+    &lt;/fieldset>
+&lt;/form></code></pre>
+
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<!--    todo: tip в html надо указывать URL, а не путь в файловой системе как в случае PHP-->
+<form action="<?=(!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] ."/common/scripts/getFormInfo.php"?>" method="POST">
+    <fieldset>
+        <label for="first_name">Имя:</label>
+        <input type="text" name="first_name" size="20" /><br />
+        <label for="last_name">Фамилия:</label>
+        <input type="text" name="last_name" size="20" /><br />
+        <label for="email">Адрес электронной почты:</label>
+        <input type="text" name="email" size="50" /><br />
+        <label for="facebook_url">URL в Facebook:</label>
+        <input type="text" name="facebook_url" size="50" /><br />
+        <label for="twitter_handle">Идентификатор в Twitter:</label>
+        <input type="text" name="twitter_handle" size="20" /><br />
+    </fieldset>
+    <fieldset class="center">
+        <input type="submit" value="Вступить в клуб" />
+        <input type="reset" value="Очистить и начать все сначала" />
+    </fieldset>
+</form>
+</pre>
+    </div>
+</div>
+<p>Файл <span class="code">getFormInfo.php</span> содержит следующий код:</p>
+<pre><code>&lt;html>
+&lt;body>
+&lt;div id="content">
+    &lt;p>Это структура с данными, получаемыми из формы:&lt;/p>
+    &lt;p>
+        Имя: &lt;?php echo $_REQUEST['first_name']; ?>&lt;br />
+        Фамилия: &lt;?php echo $_REQUEST['last_name']; ?>&lt;br />
+        Адрес электронной почты: &lt;?php echo $_REQUEST['email']; ?>&lt;br />
+        URL в Facebook: &lt;?php echo $_REQUEST['facebook_url']; ?>&lt;br />
+        Идентификатор в Twitter: &lt;?php echo $_REQUEST['twitter_handle']; ?>&lt;br />
+    &lt;/p>
+&lt;/div>
+&lt;div id="footer">&lt;/div>
+&lt;/body>
+&lt;/html></code></pre>
+<p>Для получения значений из форм принято использовать инструкцию следующего рода: </p>
+<pre><code>&lt;?php
+echo $_REQUEST['name'];
+?></code></pre>
+<p><span class="code">$_REQUEST</span> — это специальная PHP-переменная,
+    позволяющая получать информацию из веб-запроса.</p>
+<h3>Практика: более интерактивный скрипт сбора данных с формы</h3>
+<p>На примере скрипта getFormInfo.php отработанные полученные знания PHP.</p>
+<p><b>1.</b> Добавим значения по умолчанию, если пользователем не было ничего введено некоторое поле. Для этого используем тернарный оператор:</p>
+<pre><code>&lt;?php echo $_REQUEST['email'] ? $_REQUEST['email']: "Ничего не введено в поле"; ?></code></pre>
+<p>Эту инструкцию можно сократить:</p>
+<pre><code>&lt;?php echo $_REQUEST['email'] ? : "Ничего не введено в поле"; ?></code></pre>
+<p>Вмето того, чтобы проверять непустоту каждой функции можно написать следующую функцию:</p>
+<pre><code>&lt;?php
+function checkForEmpty($var){
+    echo $var ? : "Ничего не введено в поле";
 }
 ?></code></pre>
-<?
-if (isset($_COOKIE['location'])) {
-    $location = $_COOKIE['location'];
-    echo $location;
+<p>Используем стандартную проверку пустоты поля:</p>
+<pre><code>&lt;?php
+if (!isset($var) || trim($var) == ''){
+//    если поле пусто
+}
+?></code></pre>
+
+<p><b>2.</b> Для того, чтобы свободнее использовать содержимое полей вынесем их в переменные:</p>
+<pre><code>&lt;?php
+$first_name=$_REQUEST['first_name'];
+$last_name=$_REQUEST['last_name'];
+$email=$_REQUEST['email'];
+$facebook_url=$_REQUEST['facebook_url'];
+$twitter_handle=$_REQUEST['twitter_handle'];
+?></code></pre>
+
+<p><b>3.</b> Переменные полей можно использовать для добавления текста, который зависит от содержания полей. Например, вот так:</p>
+<pre><code>&lt;p>&lt;b>Ну, здравствуй, человек, которого зовут &lt;?=$first_name?:"никак"?> по фамилии &lt;?=$last_name?:"никак"?>.&lt;/b>&lt;/p></code></pre>
+
+<p><b>4.</b> Как можно заметить в нашей форме используются поля не очень релевантные для рунета. Заменим их, а также преобразуем вывод, так чтобы он выдавал рабочие гиперссылки.</p>
+<pre><code>&lt;?php
+function checkForLink($var):string{
+    return  "&lt;a href='$var'>$var&lt;/a>" ? : "Ничего не введено в поле";
+}
+?></code></pre>
+
+<p><b>5.</b> Добавим рудиментарную валидацию для электронной почты (проверка наличия <span class="code">@</span>):</p>
+<pre><code>&lt;?php
+function valiadateMail($var){
+    if ($var!="Ничего не введено в поле"){
+        if (strpos($var, '@')!==false){
+            return "Введена не валидная почта";
+        }
+    }
+    else {
+        return $var;
+    }
 }
 ?>
-<p>Учтите, что прочитать значение cookie можно только после того, как он был отправлен браузеру. Это означает, что при установке cookie его нельзя прочитать до
-    тех пор, пока браузер не перезагрузит страницу (или не совершит какое-нибудь
-    другое действие с доступом к cookie) с вашего сайта и не передаст cookie в ходе
-    этого процесса обратно на сервер.</p>
-<h2>Удаление cookie</h2>
-<p>Для удаления cookie его нужно повторно установить с настройкой даты истечения срока действия на прошедшее время. При этом важно, чтобы все параметры нового вызова функции setcookie, за исключением timestamp, в точности повторяли те параметры, которые указывались при создании cookie, в противном
-    случае удаление не состоится. Поэтому для удаления ранее созданного cookie
-    нужно воспользоваться следующей строкой кода:</p>
-<pre><code class="language-php">&lt;?setcookie('location', 'USA', time() – 2592000, '/');?></code></pre>
-<p>Поскольку указано уже прошедшее время, cookie будет удален. Здесь я использовал время, равное 2 592 000 с в прошлом (что соответствует одному месяцу).
-    Это сделано в расчете на неправильную установку даты и времени на компьютере
-    клиента. Можно также указать для значения cookie пустую строку (или значение
-    FALSE), и тогда PHP автоматически установит для вас свое время на прошлое.</p>
+&lt;p>Адрес электронной почты: &lt;?=valiadateMail(checkForEmpty($email)); ?>&lt;br />&lt;/p></code></pre>
+<p>Итак, итоге мы получаем следующий скрипт PHP:</p>
+<pre><code>&lt;?php
+$first_name=trim($_REQUEST['first_name']);
+$last_name=trim($_REQUEST['last_name']);
+$email=trim($_REQUEST['email']);
+$vk_url=trim($_REQUEST['vk_url']);
+$github_username=trim($_REQUEST['github_username']);
+
+function checkForEmpty($var):string{
+    if (!isset($var) || $var == ''){
+        return  "Ничего не введено в поле";
+    }
+    else {
+        return $var;
+    }
+}
+function checkForLink($var):string{
+    if (!isset($var) || $var == ''){
+        return  "Ничего не введено в поле";
+    }
+    else {
+        $var=$var;
+        return  "&lt;a href='$var'>$var&lt;/a>";
+    }
+}
+function checkForUserName($username, $domain):string{
+    if (!isset($username) || $username == ''){
+        return  "Ничего не введено в поле";
+    }
+    else {
+        $username=$username;
+        return  "&lt;a href='$domain/$username'>$username&lt;/a>";
+    }
+}
+
+function valiadateMail($var){
+    if ($var!="Ничего не введено в поле"){
+        if (strpos($var, '@')!==false){
+            return "Введена не валидная почта";
+        }
+    }
+    else {
+        return $var;
+    }
+}
+
+?>
+&lt;html>
+&lt;body>
+&lt;div id="content">
+    &lt;p>Это структура с данными, получаемыми из формы:&lt;/p>
+    &lt;p>
+        Имя: &lt;?=checkForEmpty($first_name);?>&lt;br />
+        Фамилия: &lt;?=checkForEmpty($last_name); ?>&lt;br />
+        Адрес электронной почты: &lt;?=valiadateMail(checkForEmpty($email)); ?>&lt;br />
+        URL Вконтакте: &lt;?=checkForLink($vk_url); ?>&lt;br />
+        Имя юзера Github: &lt;?= checkForUserName($github_username, 'https://github.com')?> &lt;br/>
+    &lt;/p>
+    &lt;p>&lt;b>Ну, здравствуй, человек, которого зовут &lt;?=$first_name?:"никак"?> по фамилии &lt;?=$last_name?:"никак"?>.&lt;/b>&lt;/p>
+&lt;/div>
+&lt;/body>
+&lt;/html></code></pre>
+
+
+<h3>Переменная <span class="code">$_REQUEST</span> — это массив</h3>
+<p>Специальная переменная PHP, снабжающая вас всей информацией из веб-формы,
+    называется <span class="code">$_REQUEST</span>. Она также является массивом. Когда вы напишете код вида
+    <span class="code">$_REQUEST['first_name']</span>, вы просто извлечете конкретный фрагмент информации
+    из этого массива.</p>
+<p>Вы видели, что информацию из массива можно извлечь не только по имени,
+    то есть по ярлыку на папке, но и по номеру. Поэтому для ее извлечения можно
+    указать <span class="code">$file_cabinet['first_name']</span> или <span class="code">$file_cabinet[0]</span>. То же самое справедливо
+    и для <span class="code">$_REQUEST</span>, поскольку это всего лишь массив. Таким образом, указание
+    <span class="code">$_REQUEST[0]</span> в PHP вполне допустимо</p>
+<p>В качестве демонстрации получим все значения переменных массива <span class="code">$_REQUEST</span>:</p>
+<pre><code>&lt;?php
+foreach($_REQUEST as $value) {
+    echo "&lt;p>" . $value . "&lt;/p>";
+}
+?></code></pre>
+<p>Для вывода пар ключ-значение массива <span class="code">$_REQUEST</span> применяется следующая конструкция:</p>
+<pre><code>&lt;?php
+foreach($_REQUEST as $key => $value) {
+    echo "&lt;p>Для " . $key . ", имеется значение '" . $value . "'.&lt;/p>";
+}
+?></code></pre>
+
+
+
+
+
+<h2>Значения по умолчанию</h2>
+<form method="post" action="calc.php"><pre>
+Сумма заимствования <input type="text" name="principal">
+ Количество лет <input type="text" name="years" value="15">
+ Процент годовых <input type="text" name="interest" value="3">
+ <input type="submit">
+</pre></form>
+<p>Значения по умолчанию используются также для скрытых полей, которые применяются тогда, когда вы хотите наряду с данными, введенными пользователем, отправить из веб-страницы в свою программу какую-нибудь дополнительную информацию.</p>
+<h2>Типы элементов ввода данных</h2>
+<h3>Текстовое поле</h3>
+<pre><code class="language-php">&lt;input type="text" name="имя" size="pa3Mep" maxlength=20 value="значение"></code></pre>
+<input type="text" name="имя" size=20 maxlength=20 value="значение">
+<h3>Текстовая область</h3>
+<pre><code class="language-php">&lt;textarea name="имя" соls="ширина" rows="высота" wrap="тип">
+ Это текст, отображаемый по умолчанию.
+&lt;/textarea></code></pre>
+<textarea name="имя" соls="ширина" rows="высота" wrap="тип">
+ Это текст, отображаемый по умолчанию.
+</textarea>
+<h3>Флажки</h3>
+<pre><code class="language-php">Я согласен &lt;input type="checkbox" name="agree">
+Подписаться? &lt;input type="checkbox" name="news" checked="checked"></code></pre>
+Я согласен <input type="checkbox" name="agree"><br>
+Подписаться? <input type="checkbox" name="news" checked="checked">
+<p>Предложение сделать выбор, установив сразу несколько флажков</p>
+<pre><code class="language-php">Ванильное &lt;input type="checkbox" name="ice" value="Vanilla">
+Шоколадное &lt;input type="checkbox" name="ice" value="Chocolate">
+Земляничное &lt;input type="checkbox" name="ice" value="Strawberry"></code></pre>
+Ванильное <input type="checkbox" name="ice" value="Vanilla">
+Шоколадное <input type="checkbox" name="ice" value="Chocolate">
+Земляничное <input type="checkbox" name="ice" value="Strawberry">
+<p>Отправка нескольких значений с помощью массива</p>
+<form>
+Ванильное <input type="checkbox" name="ice[]" value="Vanilla">
+Шоколадное <input type="checkbox" name="ice[]" value="Chocolate">
+Земляничное <input type="checkbox" name="ice[]" value="Strawberry">
+    <input type="submit" method="post" action="">
+</form>
+<?
+foreach($_POST as $item) echo "$item<br>";
+?>
+<h3>Скрытые поля</h3>
+<p>Иногда бывает удобно пользоваться скрытыми полями формы, чтобы получить возможность отслеживать состояние ее ввода. Например, может потребоваться узнать, отправлена форма или нет. Эти сведения можно получить, добавив к PHP-коду фрагмент кода HTML:</p>
+<pre><code class="language-php">&lt;?echo '&lt;input type="hidden" name="submitted" value="yes">'?></code></pre>
+<?echo '<input type="hidden" name="submitted" value="yes">'?>
+<p>Это простая PHP-инструкция echo, добавленная к полю ввода HTML-формы. Предположим, форма была создана вне программы и показана пользователю. При первом получении PHP-программой введенных данных эта строка кода не будет запущена, поэтому поля с именем submitted не будет. Программа PHP воссоздает форму, добавляя к ней поле ввода.</p>
+<label>8.00-12.00<input type="radio" name="time" value="1"></label>
+
+<h2>Обезвреживание ввода</h2>
+<?php
+function sanitizeString($var)
+{
+    if (get_magic_quotes_gpc())
+        $var = stripslashes($var);
+    $var = strip_tags($var);
+    $var = htmlentities($var);
+    return $var;
+}
+function sanitizeMySQL($pdo, $var)
+{
+    $var = $pdo->quote($var);
+    $var = sanitizeString($var);
+    return $var;
+}
+?>
+
+
+<h2>Перевод между Фаренгейтом и Цельсием</h2>
+<?php // convert.php
+$f = $c = '';
+if (isset($_POST['f'])) $f = sanitizeString($_POST['f']);
+if (isset($_POST['c'])) $c = sanitizeString($_POST['c']);
+if (is_numeric($f))
+{
+    $c = intval((5 / 9) * ($f - 32));
+ $out = "$f &deg;f соответствует $c &deg;c";
+ }
+elseif(is_numeric($c))
+{
+    $f = intval((9 / 5) * $c + 32);
+    $out = "$c &deg;c equals $f &deg;f";
+}
+else $out = "";
+echo <<<_END
+ <title>Программа перевода температуры</title>
+ </head>
+ <body>
+ <pre>
+ Введите температуру по Фаренгейту или по Цельсию
+ и нажмите кнопку Перевести
+<b>$out</b>
+ <form method="post" action=" ">
+ По Фаренгейту <input type="text" name="f" size="7">
+ По Цельсию <input type="text" name="c" size="7">
+ <input type="submit" value="Перевести">
+ </form>
+ </pre>
+_END;
+?>
+<h2>Усовершенствования, появившиеся в HTML5</h2>
+<h3>autocomplete</h3>
+<pre><code class="language-html">&lt;form action='myform.php' method='post' autocomplete='on'>
+    &lt;input type='text' name='username'>
+    &lt;input type='password' name='password' autocomplete='off'>
+&lt;/form></code></pre>
+<form action='myform.php' method='post' autocomplete='on'>
+    <input type='text' name='username'>
+    <input type='password' name='password' autocomplete='off'>
+</form>
+<h3>autofocus</h3>
+<input type='text' name='query' autofocus='autofocus'>
+<p>Браузеры, использующие интерфейсы сенсорных экранов (Android или iOS), обычно игнорируют атрибут autofocus, оставляя за пользователем право прикоснуться к изображению элемента, чтобы он получил фокус. Если бы это было не так, то генерируемые включением этого атрибута увеличения элемента, фокусировки и появления экранной клавиатуры очень скоро стали бы сильно раздражать пользователей.</p>
+<h3>placeholder</h3>
+<input type='text' name='name' size='50' placeholder='Имя и фамилия'>
+
+<form action='url1.php' method='post'>
+    <input type='text' name='field'>
+    <input type='submit' formaction='url2.php'>
+</form>
+
+
+
+
+
 <!--Футер (+скрипты)-->
 <?php
 include_once $_SERVER['DOCUMENT_ROOT']."/common/footer.php";

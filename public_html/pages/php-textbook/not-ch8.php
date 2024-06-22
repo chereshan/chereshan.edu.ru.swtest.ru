@@ -108,6 +108,69 @@ PHP проявляется при включении в веб-страницу 
     </div>
 </div>
 
+<h2>Путь страницы</h2>
+<p>В PHP существует разделение. С одной стороны - реальная файловая система с реальными папками и файлами, с другой - URL адреса, которые могут не иметь ничего общего с реальной файловой структурой.</p>
+<p>Если ты видишь на каком-нибудь сайте страницу с URL <span class="code">/category/monitors</span> - это совсем не значит, что на сайте есть скрипт <span class="code">/category/monitors/index.php</span>.</p>
+
+
+<p>Получить абсолютный путь скрипта можно с помощью магической константы <span class="code">__FILE__</span>:</p>
+<pre><code>&lt;?php echo __FILE__;?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?php echo __FILE__;?>
+</pre>
+    </div>
+</div>
+
+
+<pre><code>&lt;?echo $_SERVER['DOCUMENT_ROOT']?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?echo $_SERVER['DOCUMENT_ROOT']?>
+</pre>
+    </div>
+</div>
+<p></p>
+
+<pre><code>&lt;?echo __DIR__?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?echo __DIR__?>
+</pre>
+    </div>
+</div>
+
+<pre><code>&lt;?echo dirname(__FILE__)?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?echo dirname(__FILE__)?>
+</pre>
+    </div>
+</div>
+
+<p></p>
+<pre><code>&lt;?echo (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?echo (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';?>
+</pre>
+    </div>
+</div>
+<p></p>
+<pre><code>&lt;?echo "http://" . $_SERVER['SERVER_NAME'] ?></code></pre>
+<div class="code-example-output-title"><span>Вывод:</span>
+    <div class="code-example-output">
+<pre>
+<?echo "http://" . $_SERVER['SERVER_NAME'] ?>
+</pre>
+    </div>
+</div>
+
 <h2>Включение внешнего кода</h2>
 <p>PHP поддерживает две конструкции для загрузки кода и HTML из другого модуля: <span class="code">require</span> и <span class="code">include</span>. Они загружают файл в процессе выполнения скрипта PHP, работают в условных командах и циклах и сигнализируют, если файл не удается найти. Для поиска файлов используется либо путь, указанный как часть указателя, либо значение параметра <span class="code">include_path</span> в файлах <span class="code">php.ini</span>. Параметр <span class="code">include_path</span> может быть переопределен функцией <span class="code">set_include_path()</span>. Если файл не найден, PHP ищет файл в каталоге вызывающего скрипта. Попытка выполнения <span class="code">require</span> с несуществующим файлом приводит к неисправимой ошибке, тогда как <span class="code">include</span> выдает предупреждение, не останавливая выполнение скрипта.</p>
 <p>Использование команды include равносильно вставки включаемого файла в данное место текущего файла.</p>

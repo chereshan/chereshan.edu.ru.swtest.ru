@@ -46,16 +46,7 @@ foreach ($files as $key => $value) {
 ?>
 </ul>
 
-<?echo $_SERVER['DOCUMENT_ROOT']?>
-<p></p>
-<?echo __DIR__?>
-<p></p>
-<?echo dirname(__FILE__)?>
-<p></p>
-<?echo (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';?>
-<p></p>
-<?echo "http://" . $_SERVER['SERVER_NAME']
-?>
+
 <!--Футер (+скрипты)-->
 <?php
 include_once $_SERVER['DOCUMENT_ROOT']."/common/footer.php";
